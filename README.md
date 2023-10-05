@@ -1,2 +1,2 @@
-# url_unshortener
-A public API to unshort URLs
+# URL Shortener
+Unshorten URL API is a simple and secure tool that allows you to expand and verify short URLs before visiting them. This can help you avoid malicious websites and phishing attempts while providing you with the flexibility to integrate the API into your own applications or services.
