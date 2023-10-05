@@ -24,12 +24,12 @@ app.use((req, res, next) => {
   let requestLimit = 100;
 
   // Define o nome do token
-  let token_name = 'no token provided';
+  let token_name = 'public';
 
   // Verifica se o token é válido e atribui um limite maior e o nome do token
   if (token === adminToken) {
     requestLimit = 5000;
-    token_name = "admin token";
+    token_name = "admin";
   } else if (token === songstatsToken) {
     requestLimit = 500;
     token_name = "songstats token";
@@ -90,7 +90,12 @@ app.get('/', async (req, res) => {
         // Calcule o tempo de execução
         const elapsedTime = Date.now() - req.startTime;
 
-        return res.json({ url: unshortenedUrl, token: req.token_name, execute_time: elapsedTime });
+        return res.json({ 
+          url: unshortenedUrl, 
+          execute_time: elapsedTime,
+          token: req.token_name,
+          description: "URL processed successfully."
+        });
       } else {
         return res.status(400).json({ error: 'The URL provided is not a valid short URL.' });
       }
