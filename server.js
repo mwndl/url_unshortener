@@ -66,7 +66,11 @@ app.get('/', async (req, res) => {
   const urlParam = req.query.url;
 
   if (!urlParam) {
-    return res.status(400).json({ error: 'Missing URL. Usage example: https://unshort.onrender.com/?url=www.example.com.' });
+    return res.status(400).json({ 
+      error: '400 - Bad Request',
+      description: "Missing URL. Usage example: https://unshort.onrender.com/?url=www.example.com",
+      more_information: "Please visit https://github.com/mwndl/url_unshortener for more informations."
+    });
   }
 
   // Verifique se a URL fornecida começa com "http://" ou "https://"
@@ -84,7 +88,10 @@ app.get('/', async (req, res) => {
 
       if (unshortenedUrl) {
         if (unshortenedUrl === fullUrl) {
-          return res.status(400).json({ error: 'The provided URL is already a complete URL.' });
+          return res.status(400).json({ 
+            error: '400 - Bad Request',
+            description: "The provided URL is already a complete URL."
+          });
         }
 
         // Calcule o tempo de execução
@@ -96,12 +103,19 @@ app.get('/', async (req, res) => {
           token: req.token_name,
           description: "URL processed successfully."
         });
+
       } else {
-        return res.status(400).json({ error: 'The URL provided is not a valid short URL.' });
+        return res.status(400).json({ 
+          error: '400 - Bad Request',
+          description: "The URL provided is not a valid short URL."
+        });
       }
     });
   } catch (error) {
-    return res.status(500).json({ error: 'An error occurred while shortening the URL.' });
+    return res.status(500).json({ 
+      error: '500 - Internal Server Error',
+      description: "An error occurred while shortening the URL."
+    });
   }
 });
 
