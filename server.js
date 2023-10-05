@@ -69,14 +69,21 @@ app.get('/', async (req, res) => {
     return res.status(400).json({ error: 'Missing URL. Usage example: https://unshort.onrender.com/?url=www.example.com.' });
   }
 
-  try {
-    const protocol = urlParam.startsWith('https') ? https : http;
+  // Verifique se a URL fornecida começa com "http://" ou "https://"
+  const isHttp = urlParam.startsWith('http://');
+  const isHttps = urlParam.startsWith('https://');
 
-    protocol.get(urlParam, (response) => {
+  // Se não começar com nenhum dos dois, adicione automaticamente "http://"
+  const fullUrl = isHttp || isHttps ? urlParam : `http://${urlParam}`;
+
+  try {
+    const protocol = fullUrl.startsWith('https') ? https : http;
+
+    protocol.get(fullUrl, (response) => {
       const unshortenedUrl = response.responseUrl;
 
       if (unshortenedUrl) {
-        if (unshortenedUrl === urlParam) {
+        if (unshortenedUrl === fullUrl) {
           return res.status(400).json({ error: 'The provided URL is already a complete URL.' });
         }
 
