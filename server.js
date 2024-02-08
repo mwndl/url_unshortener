@@ -8,8 +8,8 @@ const port = 3000;
 const requestCountByIP = new Map();
 
 // Token para aumentar o limite de solicitações
-const adminToken = 'oUoTJCv2fZNEF8lIS3CKW4ofaQTCvU'; // 5000 requests per hour (IP based)
-const songstatsToken = '4btF9MED2l5wb9EgcGvXqxLrpR3gfo'; // 500 requests per hour (IP based)
+const adminToken = '372RCWyB5ry1MCYg2Cp9MCIyAiAL30'; // 5000 requests per hour (IP based)
+const songstatsToken = 'QYfOiP2V71492OPGYF6knN3ZZN6VKZ'; // 500 requests per hour (IP based)
 
 app.use(express.json());
 
