@@ -11,6 +11,7 @@ To expand and verify a short URL, simply make a request to the URL Unshortener A
 ```http
 GET https://yourservice.com/?url=mxmt.ch/t/2545492
 
+
 ### Example Response
 
 ```json
