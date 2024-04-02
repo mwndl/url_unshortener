@@ -4,61 +4,62 @@ const https = require('follow-redirects').https;
 const app = express();
 const port = 3000;
 
-// Armazena os registros de solicitação por IP
+// Stores request records per IP
 const requestCountByIP = new Map();
 
-// Token para aumentar o limite de solicitações
+// Token to increase request limit
 const adminToken = '372RCWyB5ry1MCYg2Cp9MCIyAiAL30'; // 5000 requests per hour (IP based)
-const songstatsToken = 'QYfOiP2V71492OPGYF6knN3ZZN6VKZ'; // 500 requests per hour (IP based)
+const altToken = 'QYfOiP2V71492OPGYF6knN3ZZN6VKZ'; // 500 requests per hour (IP based)
 
 app.use(express.json());
 
-// Middleware para limitar as solicitações por IP
+// Middleware to limit requests per IP
 app.use((req, res, next) => {
-  const clientIP = req.ip; // Obtém o IP do cliente
+  const clientIP = req.ip; // Get client IP
 
-  // Verifica se o usuário forneceu um token
+  // Check if user provided a token
   const token = req.query.token;
 
-  // Define o limite padrão
+  // Set default limit
   let requestLimit = 100;
 
-  // Define o nome do token
+  // Set token name
   let token_name = 'public';
 
-  // Verifica se o token é válido e atribui um limite maior e o nome do token
+  // Check if token is valid and assign a higher limit and token name
   if (token === adminToken) {
-    requestLimit = 5000;
+    requestLimit = 5000; // Set admin token request limit
     token_name = "admin";
-  } else if (token === songstatsToken) {
-    requestLimit = 500;
-    token_name = "songstats token";
-  }
+  } else if (token === altToken) {
+    requestLimit = 500; // Set altToken token request limit
+    token_name = "alternative token";
+    // create as many tokens as you want
+  } 
 
-  // Verifica se o IP atingiu o limite de solicitações por hora
+  // Check if IP has reached hourly request limit
   if (requestCountByIP.has(clientIP)) {
     const requestCount = requestCountByIP.get(clientIP);
     if (requestCount >= requestLimit) {
-      return res.status(429).json({ error: 'Limite de solicitações excedido para este IP.' });
+      return res.status(429).json({ error: 'Request limit exceeded for this IP.' });
     }
     requestCountByIP.set(clientIP, requestCount + 1);
   } else {
-    // Se o IP não foi registrado antes, inicialize com 1 solicitação
+    // If IP hasn't been registered before, initialize with 1 request
     requestCountByIP.set(clientIP, 1);
   }
 
-  // Define um temporizador para redefinir o contador de solicitações após 1 hora
+  // Set a timer to reset request counter after 1 hour
   setTimeout(() => {
     requestCountByIP.delete(clientIP);
-  }, 3600000); // 1 hora em milissegundos
+  }, 3600000); // 1 hour in milliseconds
 
-  // Define o nome do token na solicitação
+  // Set token name in request
   req.token_name = token_name;
 
-  // Adicione o horário de início do processamento da solicitação
+  // Add start time of request processing
   req.startTime = Date.now();
 
-  // Chama o próximo middleware
+  // Call next middleware
   next();
 });
 
@@ -68,16 +69,16 @@ app.get('/', async (req, res) => {
   if (!urlParam) {
     return res.status(400).json({ 
       error: '400 - Bad Request',
-      description: "Missing URL. Usage example: https://unshort.onrender.com/?url=www.example.com",
-      more_information: "Please visit https://github.com/mwndl/url_unshortener for more informations."
+      description: "No URL to unshort",
+      more_information: "Please visit https://github.com/mwndl/url_unshortener for more information."
     });
   }
 
-  // Verifique se a URL fornecida começa com "http://" ou "https://"
+  // Check if provided URL starts with "http://" or "https://"
   const isHttp = urlParam.startsWith('http://');
   const isHttps = urlParam.startsWith('https://');
 
-  // Se não começar com nenhum dos dois, adicione automaticamente "http://"
+  // If it doesn't start with either, automatically add "http://"
   const fullUrl = isHttp || isHttps ? urlParam : `http://${urlParam}`;
 
   try {
@@ -94,7 +95,7 @@ app.get('/', async (req, res) => {
           });
         }
 
-        // Calcule o tempo de execução
+        // Calculate execution time
         const elapsedTime = Date.now() - req.startTime;
 
         return res.json({ 
