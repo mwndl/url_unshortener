@@ -22,3 +22,10 @@ GET https://yourservice.com/?url=mxmt.ch/t/2545492
     "description": "URL processed successfully."
 }
 ```
+
+Please note that if a token is not provided, the service will limit access to 100 requests per hour. To use a token, simply add a 'token' parameter to the URL and add a token defined in the code as a value.
+
+### Example Request
+```http
+GET https://yourservice.com/?url=mxmt.ch/t/2545492&token=<YOUR_TOKEN_HERE>
+```
